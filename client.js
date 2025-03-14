@@ -1,4 +1,5 @@
-var socket = io("http://localhost:8000");
+var socket = io("https://freechatt.onrender.com");
+
 
 const form = document.getElementById("sender");
 const messageInput = document.getElementById("sendmsg");
