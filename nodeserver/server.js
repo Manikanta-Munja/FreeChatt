@@ -1,42 +1,21 @@
-const express = require('express');
+const express = require("express");
 const app = express();
-const http = require('http').createServer(app);
-const io = require('socket.io')(http, {
-    cors: {
-        origin: "*",  // Allow requests from any origin
-        methods: ["GET", "POST"]
-    }
-});
-const cors = require('cors');
+const http = require("http").createServer(app);
+const io = require("socket.io")(http);
+const PORT = process.env.PORT || 8000;
 
-app.use(cors());  // Enable CORS for all routes
-app.use(express.static(__dirname));  // Serve static files
+// Serve static files from "public" folder
+app.use(express.static("public"));
 
-const users = {};
-
-io.on('connection', socket => {
-
-    console.log("A new user connected:", socket.id);
-
-    socket.on('new-user-joined', Name => {
-        users[socket.id] = Name;
-        console.log("new_user", Name);
-        socket.broadcast.emit('user-joined', Name);
-    });
-    socket.on('send', message => {
-        const data = { message: message, Name: users[socket.id] };
-        socket.broadcast.emit('receive', data);  // Sends to others
-        // socket.emit('receive', data);  // Sends back to sender
-    });
-    
-    socket.on('disconnect', () => {
-        socket.broadcast.emit('left',users[socket.id]);
-        console.log(`${users[socket.id]} left the chat`);
-        delete users[socket.id];
+// Handle socket.io connections
+io.on("connection", (socket) => {
+    console.log("A user connected");
+    socket.on("disconnect", () => {
+        console.log("User disconnected");
     });
 });
 
-const PORT = process.env.PORT || 8000;  // Use dynamic port for deployment
+// Start the server
 http.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
+    console.log(`Server running at http://localhost:${PORT}`);
 });
