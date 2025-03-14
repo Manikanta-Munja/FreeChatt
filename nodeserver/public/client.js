@@ -1,4 +1,5 @@
-var socket = io("https://freechatt.onrender.com");
+const socket = io("https://freechatt.onrender.com");  // ✅ Use your Render URL
+
 
 
 const form = document.getElementById("sender");
