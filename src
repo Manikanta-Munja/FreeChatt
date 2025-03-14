@@ -1,0 +1,78 @@
+const socket=io('http://localhost:8000');
+
+const form= document.getElementById('sender');
+const messageInput=document.getElementById('sendmsg');
+const messageContainer=document.querySelector(".container");
+
+
+
+const Name =prompt("enter your name to join");
+prompt("nvdncfn");
+console.log("manikantea munja");
+socket.emit('nenew-user-joined',Name);
+
+socket.on('user-joined',data=>{
+
+})
+
+
+const io=require('socket.io')(8000);
+
+const users={};
+
+io.on('connection',socket =>{
+    socket.on('new-user-joined',Name =>{
+        
+        users[socket.id]=Name;
+        console.log("new_user",Name);
+        socket.broadcast.emit('user-joined',Name);
+
+    })
+
+    socket.on('send',message=>{
+        socket.broadcast.emit('receive',{message:message,Name:users[socket.id]})
+    });
+})
+
+
+
+
+
+
+
+
+
+// Node server which will handle socket io connections
+const express = require('express');
+const app = express();
+const http = require('http').createServer(app);
+const io = require('socket.io')(http);
+
+const users = {};
+
+app.use(express.static(__dirname+"/..")); // Serve static files (index.html, client.js)
+
+io.on('connection', socket => {
+    console.log("A new user connected:", socket.id); // Debugging
+
+    socket.on('new-user-joined', Name => {
+        users[socket.id] = Name;
+        console.log("new_user", Name);
+        socket.broadcast.emit('user-joined', Name);
+    });
+
+    socket.on('send', message => {
+        socket.broadcast.emit('receive', { message: message, Name: users[socket.id] });
+    });
+
+    socket.on('disconnect', () => {
+        console.log(`${users[socket.id]} left the chat`);
+        delete users[socket.id];
+    });
+});
+
+http.listen(8000, () => {
+    console.log("Server running at http://localhost:8000");
+});
+
+
