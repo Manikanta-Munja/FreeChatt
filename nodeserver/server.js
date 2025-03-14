@@ -36,6 +36,7 @@ io.on('connection', socket => {
     });
 });
 
-http.listen(8000, () => {
-    console.log("Server running at http://localhost:8000");
+const PORT = process.env.PORT || 8000;  // Use dynamic port for deployment
+http.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
 });
